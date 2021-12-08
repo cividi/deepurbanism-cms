@@ -1,0 +1,21 @@
+version: '3'
+services:
+  backend:
+    external_links:
+      - some-postgres
+    network_mode: bridge
+    build:
+      context: ./django
+      args:
+        ENVIRONMENT: dev
+    platform: linux/arm64
+    container_name: wagtail_grapple
+    image: ghcr.io/cividi/wagtail_grapple:dev
+    env_file:
+      - env
+    ports:
+    - "8000:8000"
+    volumes:
+      - ./django/website:/app
+    stdin_open: true
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "wagtail_vue.wsgi:application"]

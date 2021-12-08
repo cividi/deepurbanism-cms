@@ -1,0 +1,7 @@
+# Local data and media
+
+logs
+database.sqlite3
+wagtail_vue/media/*
+wagtail_vue/static_collected
+k*.sh

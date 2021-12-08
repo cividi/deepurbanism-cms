@@ -1,0 +1,13 @@
+django-adminactions==1.*
+django-extensions==3.*
+django-cors-headers==3.10.*
+wagtail>=2.15,<2.16
+wagtail-grapple==0.12.*
+channels==3.*
+boto3
+django-storages
+dj_database_url
+psycopg2-binary
+gunicorn
+python-dateutil
+pytz

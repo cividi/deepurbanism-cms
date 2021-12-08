@@ -1,0 +1,5 @@
+export DJANGO_SETTINGS_MODULE=wagtail_vue.settings.dev
+export PYTHONPATH=$PYTHONPATH:`pwd`/wagtail_vue/apps
+export PYTHONPATH=$PYTHONPATH:`pwd`/wagtail_vue
+echo "Try this next: django-admin createsuperuser"
+poetry shell
