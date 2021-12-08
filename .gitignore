@@ -41,3 +41,5 @@ local_dev.py
 
 .vimcache
 .vscode
+
+.env

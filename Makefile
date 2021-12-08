@@ -1,7 +1,7 @@
 .PHONY: build
 
 SHELL := /bin/bash
-IMAGENAME=wagtail_grapple
+IMAGENAME=deepurbanism-cms
 VERSION=0.1.0
 GH_ORG=cividi
 

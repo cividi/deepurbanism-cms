@@ -12,7 +12,7 @@ services:
     container_name: wagtail_grapple
     image: ghcr.io/cividi/wagtail_grapple:dev
     env_file:
-      - env
+      - .env
     ports:
     - "8000:8000"
     volumes:
