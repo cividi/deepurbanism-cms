@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 IMAGENAME=deepurbanism-cms
-VERSION=0.1.0
+VERSION=0.1.1
 GH_ORG=cividi
 
 build: ## Build the Docker images
@@ -36,3 +36,12 @@ destroy: ## Remove all our Docker images
 
 refresh: clean up enter
 	## Let's start again
+
+migrate:
+	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) sh -c "cd wagtail_vue && python manage.py makemigrations && python manage.py migrate"
+
+createsuperuser:
+	docker run -it --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) sh -c "cd wagtail_vue && python manage.py createsuperuser"
+
+init:
+	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) sh -c "cd wagtail_vue && python manage.py collectstatic --noinput"

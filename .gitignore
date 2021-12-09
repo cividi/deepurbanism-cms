@@ -43,3 +43,4 @@ local_dev.py
 .vscode
 
 .env
+.env.prod
