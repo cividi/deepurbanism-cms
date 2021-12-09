@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 """Page models."""
 from django.db import models
+from django.db.models.fields import CharField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.core.models import Page
 from wagtail.images.api.fields import ImageRenditionField
 from wagtail.core.fields import StreamField, RichTextField
 
+from wagtail.contrib.routable_page.models import RoutablePageMixin
+
 from .streamfields import (
+    RichTextBlock,
+    ImageBlock,
     ButtonBlock,
     ContentBlock,
     ImageGalleryBlock,
@@ -20,51 +25,100 @@ from grapple.models import (
     GraphQLStreamfield,
 )
 
-class FlexPage(Page):
-    """A flexible page class."""
+class Publication(RoutablePageMixin, Page):
+    """The publication class"""
 
-    # template = "cms/pages/home_page.html"
-    subpage_types = ['pages.FlexPage']
+    # parent_page_types = []
+    subpage_types = ['pages.Chapter']
+    parent_page_types = ['wagtailcore.Page']
 
-    headline = models.TextField(
-        max_length=140, blank=True, null=True,
-        help_text="An optional subtitle"
-    )
-    banner_image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True, blank=False,
-        on_delete=models.SET_NULL,
-        related_name="+",
-        help_text="An optional banner image",
-    )
-    body = RichTextField(
+    subtitle = CharField(max_length=200, null=True, blank=True, help_text="Publication subtitle")
+    abstract = RichTextField(
         null=True, blank=True,
-        help_text='Article body'
+        help_text='Publication abstract'
     )
-    content = StreamField([
-        ('ContentBlock', ContentBlock()),
-        ('ImageGalleryBlock', ImageGalleryBlock()),
-        ('CallToActionBlock', CallToActionBlock()),
-    ], null=True, blank=True)
+
+    intro = RichTextField(
+        null=True, blank=True,
+        help_text='Publication introduction'
+    )
 
     content_panels = [
         FieldPanel('title', classname="full title"),
-        FieldPanel('headline'),
-        FieldPanel('body'),
-        ImageChooserPanel('banner_image'),
-        StreamFieldPanel('content'),
+        FieldPanel('subtitle', classname="full"),
+        FieldPanel('abstract', classname="full"),
+        FieldPanel('intro', classname="full"),
     ]
 
     graphql_fields = [
-        GraphQLString("headline"),
-        GraphQLString("body"),
-        GraphQLImage("banner_image"),
-        GraphQLImage("banner_image_thumbnail", serializer=ImageRenditionField("fill-100x100", source="banner_image")),
-        GraphQLStreamfield("content"),
+        GraphQLString("subtitle"),
+        GraphQLString("abstract"),
+        GraphQLString("intro"),
     ]
 
     class Meta:
         """Meta information."""
 
-        verbose_name = "Page"
-        verbose_name_plural = "Pages"
+        verbose_name = "Publication"
+        verbose_name_plural = "Publications"
+
+class Chapter(Page):
+    """The chapter class"""
+
+    parent_page_types = ['pages.Publication']
+    subpage_types = ['pages.Post']
+
+    abstract = RichTextField(
+        null=True, blank=True,
+        help_text='Chapter abstract'
+    )
+
+    content_panels = [
+        FieldPanel('title', classname="full title"),
+        FieldPanel('abstract'),
+    ]
+
+    graphql_fields = [
+        GraphQLString("abstract"),
+    ]
+
+    class Meta:
+        """Meta information."""
+
+        verbose_name = "Chapter"
+        verbose_name_plural = "Chapters"
+
+class Post(Page):
+    """The post class"""
+
+    parent_page_types = ['pages.Chapter']
+    subpage_types = []
+
+    abstract = RichTextField(
+        null=True, blank=True,
+        help_text='Post abstract'
+    )
+    body = StreamField([
+        ('RichTextBlock', RichTextBlock()),
+        ('ButtonBlock', ButtonBlock()),
+        ('ImageBlock', ImageBlock()),
+        ('ImageGalleryBlock', ImageGalleryBlock()),
+        # ('CallToActionBlock', CallToActionBlock()),
+    ], null=True, blank=True)
+
+    content_panels = [
+        FieldPanel('title', classname="full title"),
+        FieldPanel('abstract', classname="full"),
+        StreamFieldPanel('body'),
+    ]
+
+    graphql_fields = [
+        GraphQLString("abstract"),
+        GraphQLStreamfield("body"),
+    ]
+
+    class Meta:
+        """Meta information."""
+
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"

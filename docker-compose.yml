@@ -1,21 +1,35 @@
 version: '3'
 services:
+  pdb:
+    image: postgres
+    volumes:
+      - var-db:/var/services
+    environment:
+      - PGDATA=/var/services/postgres/data
+      - POSTGRES_PASSWORD=wagtail
+    ports:
+       - "5434:5432"
   backend:
-    external_links:
-      - some-postgres
-    network_mode: bridge
     build:
       context: ./django
       args:
         ENVIRONMENT: dev
     platform: linux/arm64
-    container_name: wagtail_grapple
+    # container_name: wagtail_grapple
     image: ghcr.io/cividi/wagtail_grapple:dev
     env_file:
-      - .env
+      - .env.local
     ports:
     - "8000:8000"
     volumes:
       - ./django/website:/app
     stdin_open: true
-    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "wagtail_vue.wsgi:application"]
+    command: sh
+    working_dir: /app/website_vue
+    depends_on:
+      - pdb
+    command: ["python","/app/wagtail_vue/manage.py","runserver","0.0.0.0:8000"]
+    # command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "wagtail_vue.wsgi:application"]
+
+volumes:
+  var-db:

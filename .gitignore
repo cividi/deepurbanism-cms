@@ -44,3 +44,4 @@ local_dev.py
 
 .env
 .env.prod
+.env.local

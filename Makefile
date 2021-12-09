@@ -26,7 +26,7 @@ down: ## Stop the backend Docker container
 	docker-compose -p wagtail_grapple stop
 
 enter: ## Enter backend container
-	docker exec -it $(IMAGENAME) /bin/bash
+	docker exec -it wagtail_grapple_backend_1 /bin/bash
 
 clean: ## Stop and remove all Docker containers
 	docker-compose down
