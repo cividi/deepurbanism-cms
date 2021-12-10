@@ -2,12 +2,16 @@
 
 SHELL := /bin/bash
 IMAGENAME=deepurbanism-cms
-VERSION=0.1.1
+VERSION=0.1.2
 GH_ORG=cividi
+APPLIED_VERSION=0.1.2
 
 build: ## Build the Docker images
 	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):latest -t ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) --push ./django
 	# docker-compose -p wagtail_grapple build
+
+build-staging:
+	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):latest --push ./django
 
 build-dev:
 	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):dev --push --build-arg ENVIRONMENT=dev ./django
@@ -38,10 +42,10 @@ refresh: clean up enter
 	## Let's start again
 
 migrate:
-	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) sh -c "cd wagtail_vue && python manage.py makemigrations && python manage.py migrate"
+	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(APPLIED_VERSION) sh -c "cd wagtail_vue && python manage.py makemigrations && python manage.py migrate"
 
 createsuperuser:
-	docker run -it --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) sh -c "cd wagtail_vue && python manage.py createsuperuser"
+	docker run -it --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(APPLIED_VERSION) sh -c "cd wagtail_vue && python manage.py createsuperuser"
 
 init:
-	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) sh -c "cd wagtail_vue && python manage.py collectstatic --noinput"
+	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(APPLIED_VERSION) sh -c "cd wagtail_vue && python manage.py collectstatic --noinput"
