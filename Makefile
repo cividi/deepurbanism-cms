@@ -17,6 +17,9 @@ build-dev:
 	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):dev --push --build-arg ENVIRONMENT=dev ./django
 	# docker-compose -p wagtail_grapple build
 
+build-dev-local:
+	docker buildx build --platform linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):dev --load --build-arg ENVIRONMENT=dev ./django
+
 up: ## Bring the  Docker containers up
 	docker-compose -p wagtail_grapple up -d --no-build || echo 'Already up!'
 

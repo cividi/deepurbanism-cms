@@ -10,13 +10,13 @@ services:
     ports:
        - "5434:5432"
   backend:
-    build:
-      context: ./django
-      args:
-        ENVIRONMENT: dev
-    platform: linux/arm64
+    # build:
+    #   context: ./django
+    #   args:
+    #     ENVIRONMENT: dev
+    # platform: linux/arm64
     # container_name: wagtail_grapple
-    image: ghcr.io/cividi/wagtail_grapple:dev
+    image: ghcr.io/cividi/deepurbanism-cms:dev
     env_file:
       - .env.local
     ports:
