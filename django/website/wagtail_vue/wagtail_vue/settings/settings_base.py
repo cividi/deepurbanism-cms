@@ -214,7 +214,6 @@ INSTALLED_APPS = (
     'storages',
 
     'wagtail_references',
-    'wagtail_draftail_snippet',
 )
 # ======== END APP CONFIGURATION
 

@@ -12,4 +12,3 @@ gunicorn
 python-dateutil
 pytz
 git+https://github.com/cividi/wagtail_references.git
-git+https://github.com/cividi/wagtail-draftail-snippet.git

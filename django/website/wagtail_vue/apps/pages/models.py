@@ -8,6 +8,7 @@ from wagtail.core.models import Page
 from wagtail.images.api.fields import ImageRenditionField
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.snippets.blocks import SnippetChooserBlock
 
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 
@@ -33,18 +34,13 @@ class Publication(Page):
     """The publication class"""
 
     # parent_page_types = []
-    subpage_types = ['pages.Chapter']
+    subpage_types = ['pages.Chapter','pages.Post']
     # parent_page_types = ['wagtailcore.Page']
 
     subtitle = CharField(max_length=200, null=True, blank=True, help_text="Publication subtitle")
     abstract = RichTextField(
         null=True, blank=True,
         help_text='Publication abstract'
-    )
-
-    intro = RichTextField(
-        null=True, blank=True,
-        help_text='Publication introduction'
     )
 
     staged = BooleanField(
@@ -56,17 +52,15 @@ class Publication(Page):
         FieldPanel('title', classname="full title"),
         FieldPanel('subtitle', classname="full"),
         FieldPanel('abstract', classname="full"),
-        FieldPanel('intro', classname="full"),
     ]
 
-    settings_panels = Page.settings_panels + [
+    settings_panels = [
         FieldPanel('staged')
-    ]
+    ] + Page.settings_panels
 
     graphql_fields = [
         GraphQLString("subtitle"),
         GraphQLString("abstract"),
-        GraphQLString("intro"),
         GraphQLBoolean("staged"),
     ]
 
@@ -76,9 +70,14 @@ class Publication(Page):
         APIField('draft_title'),
         APIField('subtitle'),
         APIField('abstract'),
-        APIField('intro'),
         APIField('staged'),
     ]
+
+    def get_admin_display_title(self):
+        if self.staged:
+            return f"🌏 ▽ {self.draft_title}"
+        else:
+            return f"🌏 ▷ {self.draft_title}"
 
     class Meta:
         """Meta information."""
@@ -108,9 +107,9 @@ class Chapter(Page):
         FieldPanel('abstract'),
     ]
 
-    settings_panels = Page.settings_panels + [
+    settings_panels = [
         FieldPanel('staged')
-    ]
+    ] + Page.settings_panels
 
     graphql_fields = [
         GraphQLString("abstract"),
@@ -122,6 +121,12 @@ class Chapter(Page):
         APIField('staged'),
     ]
 
+    def get_admin_display_title(self):
+        if self.staged:
+            return f"📒 ▽ {self.draft_title}"
+        else:
+            return f"📒 ▷ {self.draft_title}"
+
     class Meta:
         """Meta information."""
 
@@ -132,7 +137,7 @@ class Chapter(Page):
 class Post(Page):
     """The post class"""
 
-    parent_page_types = ['pages.Chapter']
+    parent_page_types = ['pages.Chapter','pages.Publication']
     subpage_types = []
 
     abstract = RichTextField(
@@ -142,8 +147,9 @@ class Post(Page):
     body = StreamField([
         ('EmbedBlock', EmbedBlock()),
         ('RichTextBlock', RichTextBlock(
-            features=["h4","h5","h6","bold","ol","ul","hr","document-link","italic","link","snippet-link","snippet-embed"],
+            features=["h4","h5","h6","bold","ol","ul","hr","document-link","italic","link"],
         )),
+        ('Reference', SnippetChooserBlock(target_model="wagtail_references.reference", icon="openquote")),
         ('ButtonBlock', ButtonBlock()),
         ('ImageBlock', ImageBlock()),
         ('ImageGalleryBlock', ImageGalleryBlock()),
@@ -176,6 +182,12 @@ class Post(Page):
         APIField('body'),
         APIField('staged'),
     ]
+
+    def get_admin_display_title(self):
+        if self.staged:
+            return f"📄 ▽ {self.draft_title}"
+        else:
+            return f"📄 ▷ {self.draft_title}"
 
     class Meta:
         """Meta information."""
