@@ -42,6 +42,8 @@ local_dev.py
 .vimcache
 .vscode
 
+.postgres/
+
 .env
 .env.prod
 .env.local

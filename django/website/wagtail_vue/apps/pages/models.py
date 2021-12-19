@@ -3,12 +3,11 @@
 from django.db import models
 from django.db.models.fields import BooleanField, CharField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.core.models import Page
-from wagtail.images.api.fields import ImageRenditionField
 from wagtail.core.fields import StreamField, RichTextField
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.embeds.blocks import EmbedBlock
-from wagtail.snippets.blocks import SnippetChooserBlock
+from wagtail_references.blocks import ReferenceChooserBlock
 
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 
@@ -23,24 +22,26 @@ from .streamfields import (
 
 from wagtail.api import APIField
 
+from grapple.helpers import register_query_field
 from grapple.models import (
     GraphQLBoolean,
     GraphQLString,
     GraphQLStreamfield,
+    GraphQLCollection,
 )
-
 
 class Publication(Page):
     """The publication class"""
 
     # parent_page_types = []
     subpage_types = ['pages.Chapter','pages.Post']
-    # parent_page_types = ['wagtailcore.Page']
+    parent_page_types = ['wagtailcore.page']
 
     subtitle = CharField(max_length=200, null=True, blank=True, help_text="Publication subtitle")
     abstract = RichTextField(
         null=True, blank=True,
-        help_text='Publication abstract'
+        help_text='Publication abstract',
+        features=[],
     )
 
     staged = BooleanField(
@@ -94,7 +95,8 @@ class Chapter(Page):
 
     abstract = RichTextField(
         null=True, blank=True,
-        help_text='Chapter abstract'
+        help_text='Chapter abstract',
+        features=[],
     )
 
     staged = BooleanField(
@@ -114,11 +116,6 @@ class Chapter(Page):
     graphql_fields = [
         GraphQLString("abstract"),
         GraphQLBoolean("staged"),
-    ]
-
-    api_fields = [
-        APIField('abstract'),
-        APIField('staged'),
     ]
 
     def get_admin_display_title(self):
@@ -142,18 +139,14 @@ class Post(Page):
 
     abstract = RichTextField(
         null=True, blank=True,
-        help_text='Post abstract'
+        help_text='Post abstract',
+        features=[],
     )
     body = StreamField([
         ('EmbedBlock', EmbedBlock()),
         ('RichTextBlock', RichTextBlock(
-            features=["h4","h5","h6","bold","ol","ul","hr","document-link","italic","link"],
+            features=["h4","h5","h6","bold","ol","ul","hr","document-link","italic","link","reference-link"],
         )),
-        ('Reference', SnippetChooserBlock(target_model="wagtail_references.reference", icon="openquote")),
-        ('ButtonBlock', ButtonBlock()),
-        ('ImageBlock', ImageBlock()),
-        ('ImageGalleryBlock', ImageGalleryBlock()),
-        # ('CallToActionBlock', CallToActionBlock()),
     ], null=True, blank=True)
 
     staged = BooleanField(
@@ -174,13 +167,12 @@ class Post(Page):
     graphql_fields = [
         GraphQLString("abstract"),
         GraphQLStreamfield("body"),
+        # GraphQLCollection(
+        #     GraphQLForeignKey,
+        #     "related_references",
+        #     "wagtail_references.Reference"
+        # ),
         GraphQLBoolean("staged"),
-    ]
-
-    api_fields = [
-        APIField('abstract'),
-        APIField('body'),
-        APIField('staged'),
     ]
 
     def get_admin_display_title(self):
@@ -194,3 +186,28 @@ class Post(Page):
 
         verbose_name = "Post"
         verbose_name_plural = "Posts"
+
+@register_query_field('setting')
+@register_setting(icon="cog")
+class PageSettings(BaseSetting):
+
+    impressum_footer = models.TextField(
+        null=True, blank=True,
+        help_text='Impressum in the footer',
+    )
+    facebook = models.URLField(
+        help_text='Your Facebook page URL')
+    twitter = models.CharField(
+        max_length=255, help_text='Your Twitter username, without the @')
+    instagram = models.CharField(
+        max_length=255, help_text='Your Instagram username, without the @')
+    youtube = models.URLField(
+        help_text='Your YouTube channel or user account URL')
+
+    graphql_fields = [
+        GraphQLString("impressum_footer"),
+        GraphQLString("facebook"),
+        GraphQLString("twitter"),
+        GraphQLString("instagram"),
+        GraphQLString("youtube"),
+    ]

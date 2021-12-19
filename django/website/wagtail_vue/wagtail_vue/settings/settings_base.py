@@ -186,6 +186,8 @@ INSTALLED_APPS = (
     'adminactions',
     'django_extensions',
 
+    'wagtail.contrib.settings',
+    'wagtail.contrib.styleguide',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -197,7 +199,7 @@ INSTALLED_APPS = (
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
-    'wagtail.api.v2',
+    # 'wagtail.api.v2',
 
     "wagtail.contrib.routable_page",
 
@@ -205,7 +207,7 @@ INSTALLED_APPS = (
     "graphene_django",
     "channels",
 
-    'rest_framework',
+    # 'rest_framework',
     'modelcluster',
     'taggit',
     'corsheaders',
@@ -276,7 +278,7 @@ WAGTAIL_SITE_NAME = "Wagtail/Vue Website"
 
 # ======== GRAPPLE CONFIGURATION
 GRAPHENE = { "SCHEMA": "grapple.schema.schema" }
-GRAPPLE = { "apps": {"pages": "" }}
+GRAPPLE = { "APPS": ["pages","wagtail_references"]}
 # ======== END GRAPPLE CONFIGURATION
 
 # Database

@@ -3,7 +3,7 @@ services:
   pdb:
     image: postgres
     volumes:
-      - var-db:/var/services
+      - ./.postgres:/var/services
     environment:
       - PGDATA=/var/services/postgres/data
       - POSTGRES_PASSWORD=wagtail

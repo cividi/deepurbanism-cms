@@ -2,9 +2,9 @@
 
 SHELL := /bin/bash
 IMAGENAME=deepurbanism-cms
-VERSION=0.1.2
+VERSION=0.1.3
 GH_ORG=cividi
-APPLIED_VERSION=0.1.2
+APPLIED_VERSION=0.1.3
 
 build: ## Build the Docker images
 	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):latest -t ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) --push ./django
