@@ -281,6 +281,13 @@ GRAPHENE = { "SCHEMA": "grapple.schema.schema" }
 GRAPPLE = { "APPS": ["pages","wagtail_references"]}
 # ======== END GRAPPLE CONFIGURATION
 
+# ======== CORS CONFIG
+if 'DJANGO_ALLOWED_HOSTS' in env:
+    CORS_ALLOWED_ORIGINS = env['DJANGO_ALLOWED_HOSTS'].split(',')
+else:
+    CORS_ALLOWED_ORIGINS = ["localhost:3000"]
+# ======== END CORS CONFIG
+
 # Database
 
 if 'DATABASE_URL' in os.environ:

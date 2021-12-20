@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 IMAGENAME=deepurbanism-cms
-VERSION=0.1.3
+VERSION=0.1.4
 GH_ORG=cividi
 APPLIED_VERSION=0.1.3
 
