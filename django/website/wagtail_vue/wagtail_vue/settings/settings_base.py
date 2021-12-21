@@ -283,9 +283,9 @@ GRAPPLE = { "APPS": ["pages","wagtail_references"]}
 
 # ======== CORS CONFIG
 if 'DJANGO_ALLOWED_HOSTS' in env:
-    CORS_ALLOWED_ORIGINS = env['DJANGO_ALLOWED_HOSTS'].split(',')
+    CORS_ALLOWED_ORIGINS = ["https://" + url for url in env['DJANGO_ALLOWED_HOSTS'].split(',')]
 else:
-    CORS_ALLOWED_ORIGINS = ["localhost:3000"]
+    CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 # ======== END CORS CONFIG
 
 # Database

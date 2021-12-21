@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Page models."""
 from django.db import models
-from django.db.models.fields import BooleanField, CharField
+from django.db.models.fields import BooleanField, CharField, Field
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.models import Page
 from wagtail.core.fields import StreamField, RichTextField
@@ -48,6 +48,24 @@ class Publication(Page):
         'staged',
         help_text="Content is shown in staged area",
         default=False)
+    
+    impressum = RichTextField(
+        null=True, blank=True,
+        help_text='Impressum in the footer',
+        features=['h4','bold','italic','link'],
+    )
+    facebook = models.URLField(
+        null=True, blank=True,
+        help_text='Your Facebook page URL')
+    twitter = models.CharField(
+        null=True, blank=True,
+        max_length=255, help_text='Your Twitter username, without the @')
+    instagram = models.CharField(
+        null=True, blank=True,
+        max_length=255, help_text='Your Instagram username, without the @')
+    youtube = models.URLField(
+        null=True, blank=True,
+        help_text='Your YouTube channel or user account URL')
 
     content_panels = [
         FieldPanel('title', classname="full title"),
@@ -56,13 +74,23 @@ class Publication(Page):
     ]
 
     settings_panels = [
-        FieldPanel('staged')
+        FieldPanel('staged'),
+        FieldPanel('impressum'),
+        FieldPanel('facebook'),
+        FieldPanel('twitter'),
+        FieldPanel('instagram'),
+        FieldPanel('youtube'),
     ] + Page.settings_panels
 
     graphql_fields = [
         GraphQLString("subtitle"),
         GraphQLString("abstract"),
         GraphQLBoolean("staged"),
+        GraphQLString("impressum"),
+        GraphQLString("facebook"),
+        GraphQLString("twitter"),
+        GraphQLString("instagram"),
+        GraphQLString("youtube"),
     ]
 
     # Export fields over the API
@@ -186,28 +214,3 @@ class Post(Page):
 
         verbose_name = "Post"
         verbose_name_plural = "Posts"
-
-@register_query_field('setting')
-@register_setting(icon="cog")
-class PageSettings(BaseSetting):
-
-    impressum_footer = models.TextField(
-        null=True, blank=True,
-        help_text='Impressum in the footer',
-    )
-    facebook = models.URLField(
-        help_text='Your Facebook page URL')
-    twitter = models.CharField(
-        max_length=255, help_text='Your Twitter username, without the @')
-    instagram = models.CharField(
-        max_length=255, help_text='Your Instagram username, without the @')
-    youtube = models.URLField(
-        help_text='Your YouTube channel or user account URL')
-
-    graphql_fields = [
-        GraphQLString("impressum_footer"),
-        GraphQLString("facebook"),
-        GraphQLString("twitter"),
-        GraphQLString("instagram"),
-        GraphQLString("youtube"),
-    ]
