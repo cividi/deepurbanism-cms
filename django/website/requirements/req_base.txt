@@ -11,4 +11,4 @@ psycopg2-binary
 gunicorn
 python-dateutil
 pytz
-git+https://github.com/cividi/wagtail_references.git
+git+https://github.com/cividi/wagtail_references.git@820e4211a504ba9703401fcd131ced204506392f
