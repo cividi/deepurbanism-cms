@@ -11,5 +11,5 @@ psycopg2-binary
 gunicorn
 python-dateutil
 pytz
-git+https://github.com/cividi/keycloak_oidc.git@bb26af324e353b66003d44cb65cf2ca3a7826cf6
+git+https://github.com/cividi/keycloak_oidc.git@ecca1ad01297e9836a3d4191c90958b73cfff527
 git+https://github.com/cividi/wagtail_references.git@820e4211a504ba9703401fcd131ced204506392f
