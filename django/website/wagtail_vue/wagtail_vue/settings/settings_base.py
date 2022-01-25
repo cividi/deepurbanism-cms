@@ -237,7 +237,7 @@ OIDC_OP_JWKS_ENDPOINT = os.environ['OIDC_OP_JWKS_ENDPOINT']
 OIDC_OP_LOGOUT_ENDPOINT = os.environ['OIDC_OP_LOGOUT_ENDPOINT']
 
 LOGIN_URL = '/oidc/authenticate/'
-LOGOUT_REDIRECT_URL = '/oidc/logout/'
+LOGOUT_REDIRECT_URL = '/admin/'
 
 # ======== LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
