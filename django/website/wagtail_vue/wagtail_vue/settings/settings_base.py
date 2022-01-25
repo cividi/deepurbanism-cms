@@ -3,6 +3,7 @@
 import os
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
+from keycloak_oidc.default_settings import *
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -160,6 +161,7 @@ MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'mozilla_django_oidc.middleware.SessionRefresh',
     'django.contrib.messages.middleware.MessageMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 )
@@ -182,6 +184,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admin',
+
+    'keycloak_oidc',  # load after auth!
 
     'adminactions',
     'django_extensions',
@@ -219,6 +223,21 @@ INSTALLED_APPS = (
 )
 # ======== END APP CONFIGURATION
 
+AUTHENTICATION_BACKENDS = [
+    'keycloak_oidc.auth.OIDCAuthenticationBackend',
+]
+
+OIDC_RP_CLIENT_ID = os.environ['OIDC_RP_CLIENT_ID']
+OIDC_RP_CLIENT_SECRET = os.environ['OIDC_RP_CLIENT_SECRET']
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ['OIDC_OP_AUTHORIZATION_ENDPOINT']
+OIDC_OP_TOKEN_ENDPOINT = os.environ['OIDC_OP_TOKEN_ENDPOINT']
+OIDC_OP_USER_ENDPOINT = os.environ['OIDC_OP_USER_ENDPOINT']
+OIDC_OP_JWKS_ENDPOINT = os.environ['OIDC_OP_JWKS_ENDPOINT']
+OIDC_OP_LOGOUT_ENDPOINT = os.environ['OIDC_OP_LOGOUT_ENDPOINT']
+
+LOGIN_URL = '/oidc/authenticate/'
+LOGOUT_REDIRECT_URL = '/oidc/logout/'
 
 # ======== LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
