@@ -3,6 +3,7 @@
 import os
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
+from keycloak_oidc.default_settings import *
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -160,6 +161,7 @@ MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'mozilla_django_oidc.middleware.SessionRefresh',
     'django.contrib.messages.middleware.MessageMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 )
@@ -182,6 +184,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admin',
+
+    'keycloak_oidc',  # load after auth!
 
     'adminactions',
     'django_extensions',
@@ -219,6 +223,23 @@ INSTALLED_APPS = (
 )
 # ======== END APP CONFIGURATION
 
+AUTHENTICATION_BACKENDS = [
+    'keycloak_oidc.auth.OIDCAuthenticationBackend',
+]
+
+OIDC_RP_CLIENT_ID = os.environ['OIDC_RP_CLIENT_ID']
+OIDC_RP_CLIENT_SECRET = os.environ['OIDC_RP_CLIENT_SECRET']
+OIDC_KEYCLOAK_HOST = os.environ['OIDC_KEYCLOAK_HOST']
+OIDC_KEYCLOAK_REALM = os.environ['OIDC_KEYCLOAK_REALM']
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OIDC_KEYCLOAK_HOST}/auth/realms/{OIDC_KEYCLOAK_REALM}/protocol/openid-connect/auth'
+OIDC_OP_TOKEN_ENDPOINT = f'{OIDC_KEYCLOAK_HOST}/auth/realms/{OIDC_KEYCLOAK_REALM}/protocol/openid-connect/token'
+OIDC_OP_USER_ENDPOINT = f'{OIDC_KEYCLOAK_HOST}/auth/realms/{OIDC_KEYCLOAK_REALM}/protocol/openid-connect/userinfo'
+OIDC_OP_JWKS_ENDPOINT = f'{OIDC_KEYCLOAK_HOST}/auth/realms/{OIDC_KEYCLOAK_REALM}/protocol/openid-connect/certs'
+OIDC_OP_LOGOUT_ENDPOINT = f'{OIDC_KEYCLOAK_HOST}/auth/realms/{OIDC_KEYCLOAK_REALM}/protocol/openid-connect/logout'
+
+# LOGIN_URL = '/oidc/authenticate/'
+LOGOUT_REDIRECT_URL = '/admin/'
 
 # ======== LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
