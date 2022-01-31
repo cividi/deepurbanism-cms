@@ -2,9 +2,9 @@
 
 SHELL := /bin/bash
 IMAGENAME=deepurbanism-cms
-VERSION=0.1.6
+VERSION=0.1.7
 GH_ORG=cividi
-APPLIED_VERSION=0.1.6
+APPLIED_VERSION=0.1.7
 
 build: ## Build the Docker images
 	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):latest -t ghcr.io/$(GH_ORG)/$(IMAGENAME):$(VERSION) --push ./django
@@ -21,7 +21,7 @@ build-dev-local:
 	docker buildx build --platform linux/arm64 -t ghcr.io/$(GH_ORG)/$(IMAGENAME):dev --load --build-arg ENVIRONMENT=dev ./django
 
 up: ## Bring the  Docker containers up
-	docker-compose -p wagtail_grapple up -d --no-build || echo 'Already up!'
+	docker-compose up -d --no-build || echo 'Already up!'
 
 upwin:  ## Bring the Docker container up for bash on ubuntu folk
 	export WINDIR="$(subst /mnt/c,//c,$(CURDIR))/" && make up
@@ -43,6 +43,9 @@ destroy: ## Remove all our Docker images
 
 refresh: clean up enter
 	## Let's start again
+
+run:
+	docker run -it --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(APPLIED_VERSION) /bin/bash
 
 migrate:
 	docker run --rm --env-file ${ENV} ghcr.io/$(GH_ORG)/$(IMAGENAME):$(APPLIED_VERSION) sh -c "cd wagtail_vue && python manage.py makemigrations && python manage.py migrate"
